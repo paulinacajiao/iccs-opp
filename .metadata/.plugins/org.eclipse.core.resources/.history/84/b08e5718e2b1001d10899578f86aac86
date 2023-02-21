@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+    <http:listener-config name="salesforce-sapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="salesforce-sapi-config" api="resource::1ae8b068-9b03-48ad-9448-c353ff5ff5e4:salesforce-sapi:1.0.0:raml:zip:salesforce-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="4f6d67b0-8e12-4a93-9f9a-e3e191447d68" >
+		<salesforce:basic-connection username="anypoint-salesforce@mulesoft.com" password="Salesforce02" url="https://pcajiao-20210817-demo-1.my.salesforce.com/services/Soap/u/53.0" securityToken="6UKDp9RSl49SmWtHvzHEMrBM"/>
+	</salesforce:sfdc-config>
+	<flow name="salesforce-sapi-main">
+        <http:listener config-ref="salesforce-sapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="salesforce-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="salesforce-sapi-console">
+        <http:listener config-ref="salesforce-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="salesforce-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\leads:salesforce-sapi-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    fechaCreacion: "2021-12-23",
+    nombre: "Javier",
+    apellidos: "Lopez Rodriguez",
+    email: "jlopez@gmail.com ",
+    direccion: "Avenida Andalucia 23, Granada",
+    "compañia": "NA",
+    estado: "Nuevo"
+  }, 
+  {
+    fechaCreacion: "2021-12-23",
+    nombre: "Mario",
+    apellidos: "Carrillo Moreno",
+    email: "mcarrillo@gmail.com",
+    direccion: "Gran Via de Colon 23, Granada",
+    "compañia": "Autonomo",
+    estado: "Nuevo"
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<salesforce:query doc:name="Query" doc:id="c8e880be-d6f9-42b0-a6a8-8a8340261841" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[Select id, FirstName,LastName, Status from Lead Where Status = 'Qualified - Convert' LIMIT 5]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="9a79a8ce-20bd-4ecf-bea5-d7f210462757" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="get:\opportunities:salesforce-sapi-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    "fechaCreación": "2021-12-23",
+    fechaCierre: "2022-12-23",
+    nombre: "Oportunidad Javier Lopez Rodriguez",
+    cantidad: "50,000",
+    cuenta: "Javier Lopez Rodriguez",
+    estado: "Nuevo"
+  }, 
+  {
+    fechaCreacion: "2021-12-23",
+    fechaCierre: "2022-12-23",
+    nombre: "Oportunidad Carrillo Moreno",
+    cantidad: "21,00",
+    cuenta: "Carrillo Moreno",
+    estado: "Nuevo"
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<salesforce:query doc:name="Query" doc:id="b8a7097d-e218-4061-a6f4-da8b6107c0ac" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[Select id, Account.Name, Name, StageName from Opportunity where StageName = 'Closed Won' LIMIT 5]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="5bd501c7-e220-48bf-9553-e04b1626ec84" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="post:\leads:application\json:salesforce-sapi-config">
+        <ee:transform doc:name="Transform Message" doc:id="39e49ee1-15a4-483d-b7d3-0ec8c5edd59c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	LastName: payload01.apellidos,
+	FirstName: payload01.nombre,
+	Company: payload01.'compañia' default 'Company Name',
+	Street: payload01.direccion,
+	Email: payload01.email,
+	Status: payload01.estado
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Lead" doc:name="Create" doc:id="cd1b42ce-569a-4225-8323-2f81c537c94b" config-ref="Salesforce_Config"/>
+		<ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+
+{
+	'id' : if (payload.items[0].id != null) (payload.items[0].id as String) 
+	else ('Created')
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\opportunities:application\json:salesforce-sapi-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"Created"]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

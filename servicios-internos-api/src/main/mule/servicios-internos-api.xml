@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="501503ef-cf5b-48f1-a471-220639dc8501" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="servicios-internos-apiFlow" doc:id="021b6a19-f21d-4aa1-973d-56e521dbd541" >
+		<http:listener doc:name="Listener" doc:id="fe42fb6a-2dbf-4b17-99d8-1195d9fcbe2e" config-ref="HTTP_Listener_config" path="/serviciosInternos"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7e2284a0-12e2-4005-b59f-94b6725869fc" />
+	</flow>
+</mule>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;lead-360-eapi&apos;&#x0A;- Original project: &apos;lead-360-eapi&apos;&#x0A;- Original element: &apos;lead-360-papi.xml&apos;" description="Delete element" element1="src/main/mule/lead-360-papi.xml" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="1" stamp="1643695747919" subPackages="false" version="1.0"/>
+</session>

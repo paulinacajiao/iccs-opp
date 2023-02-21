@@ -1,0 +1,28 @@
+{
+  "extensionModelLoaderDescriptor": {
+    "id": "java",
+    "attributes": {
+      "type": "com.mulesoft.connectors.microsoft.dynamics.nav.internal.extension.DynamicsNavExtension",
+      "version": "2.0.11"
+    }
+  },
+  "license": {
+    "allowsEvaluation": true
+  },
+  "name": "Microsoft Dynamics NAV",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "privilegedExportedPackages": [],
+      "privilegedArtifactIds": [],
+      "exportedPackages": [],
+      "exportedResources": []
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  },
+  "minMuleVersion": "4.1.1"
+}

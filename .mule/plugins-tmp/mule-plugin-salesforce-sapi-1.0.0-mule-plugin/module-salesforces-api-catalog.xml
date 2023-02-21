@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogs xmlns="http://www.mulesoft.org/schema/mule/types" >
+
+            
+            <catalog name="get-leads-response-type" format="application/json">
+        <schema format="application/json+schema" location="./get-leads-response-data-schema.json" />
+    </catalog>
+        
+                        <catalog name="create-lead-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-lead-request-data-schema.json" />
+    </catalog>
+        
+        
+                    
+            <catalog name="get-opportunities-response-type" format="application/json">
+        <schema format="application/json+schema" location="./get-opportunities-response-data-schema.json" />
+    </catalog>
+        
+                        <catalog name="create-opportunity-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-opportunity-request-data-schema.json" />
+    </catalog>
+        
+        
+            
+        <catalog name="estado" format="application/json">
+        <schema format="application/json+schema" location="./estado-schema.json" />
+    </catalog>
+    
+    <catalog name="request-streaming-mode-enum" format="application/json">
+        <schema format="application/json+schema" location="./request-streaming-mode-enum.json" />
+    </catalog>
+
+    <catalog name="java" format="application/java">
+            <schema format="application/classloader"/>
+    </catalog>
+
+</catalogs>

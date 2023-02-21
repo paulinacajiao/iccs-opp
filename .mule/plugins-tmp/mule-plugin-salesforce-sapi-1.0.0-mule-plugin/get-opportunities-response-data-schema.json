@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/opportunities",
+  "definitions": {
+    "opportunities": {
+      "example": [
+        {
+          "fechaCreaci\u00F3n": "2021-12-23",
+          "fechaCierre": "2022-12-23",
+          "nombre": "Oportunidad Javier Lopez Rodriguez",
+          "cantidad": "50,000",
+          "cuenta": "Javier Lopez Rodriguez",
+          "estado": "Nuevo"
+        },
+        {
+          "fechaCreacion": "2021-12-23",
+          "fechaCierre": "2022-12-23",
+          "nombre": "Oportunidad Carrillo Moreno",
+          "cantidad": "21,00",
+          "cuenta": "Carrillo Moreno",
+          "estado": "Nuevo"
+        }
+      ],
+      "items": {
+        "$ref": "#/definitions/opportunity"
+      },
+      "type": "array"
+    },
+    "opportunity": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "nombre",
+        "cantidad",
+        "cuenta",
+        "estado"
+      ],
+      "properties": {
+        "fechaCreaci\u00F3n": {
+          "type": "string",
+          "format": "date"
+        },
+        "fechaCierre": {
+          "type": "string",
+          "format": "date"
+        },
+        "nombre": {
+          "type": "string"
+        },
+        "cantidad": {
+          "type": "string"
+        },
+        "cuenta": {
+          "type": "string"
+        },
+        "estado": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

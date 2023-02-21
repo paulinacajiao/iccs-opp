@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension-documentation>
+    <configs>
+        <config name="dynamics-nav-config">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="expirationPolicy">
+                    <description><![CDATA[Configures the minimum amount of time that a dynamic configuration instance can remain idle before the runtime considers it eligible for expiration. This does not mean that the platform will expire the instance at the exact moment that it becomes eligible. The runtime will actually purge the instances when it sees it fit.]]></description>
+                </parameter>
+            </parameters>
+        </config>
+    </configs>
+    <connections>
+        <connection name="ntlm">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="domain">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="username">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="password">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="soapUrl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="odataUrl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="companyName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="disableCnCheck">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="reconnection">
+                    <description><![CDATA[When the application is deployed, a connectivity test is performed on all connectors. If set to true, deployment will fail if the test doesn't pass after exhausting the associated reconnection strategy]]></description>
+                </parameter>
+                <parameter name="poolingProfile">
+                    <description><![CDATA[Characteristics of the connection pool]]></description>
+                </parameter>
+            </parameters>
+        </connection>
+        <connection name="oauth">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="username">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="accessToken">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="soapUrl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="odataUrl">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="companyName">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="disableCnCheck">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="reconnection">
+                    <description><![CDATA[When the application is deployed, a connectivity test is performed on all connectors. If set to true, deployment will fail if the test doesn't pass after exhausting the associated reconnection strategy]]></description>
+                </parameter>
+                <parameter name="poolingProfile">
+                    <description><![CDATA[Characteristics of the connection pool]]></description>
+                </parameter>
+            </parameters>
+        </connection>
+    </connections>
+    <extension name="Microsoft Dynamics NAV">
+        <description><![CDATA[]]></description>
+        <parameters/>
+    </extension>
+    <operations>
+        <operation name="codeunitOperation">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="entity">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="service">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="operation">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+                <parameter name="reconnectionStrategy">
+                    <description><![CDATA[A retry strategy in case of connectivity errors]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="odataQuery">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="query">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="fetchSize">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="streamingStrategy">
+                    <description><![CDATA[Configure if repeatable streams should be used and their behaviour]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+                <parameter name="reconnectionStrategy">
+                    <description><![CDATA[A retry strategy in case of connectivity errors]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+        <operation name="pageOperation">
+            <description><![CDATA[]]></description>
+            <parameters>
+                <parameter name="entity">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="service">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="operation">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="target">
+                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                </parameter>
+                <parameter name="targetValue">
+                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                </parameter>
+                <parameter name="reconnectionStrategy">
+                    <description><![CDATA[A retry strategy in case of connectivity errors]]></description>
+                </parameter>
+            </parameters>
+        </operation>
+    </operations>
+    <sources/>
+    <types/>
+</extension-documentation>

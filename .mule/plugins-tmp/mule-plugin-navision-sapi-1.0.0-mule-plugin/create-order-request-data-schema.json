@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/orders",
+  "definitions": {
+    "orders": {
+      "example": [
+        {
+          "fechaCreaci\u00F3n": "2021-12-23",
+          "numeroPedido": "00082323",
+          "cantidad": "23",
+          "fechaEntrega": "2021-12-23",
+          "estado": "En proceso",
+          "cuenta": "Carillo Moreno"
+        },
+        {
+          "fechaCreaci\u00F3n": "2021-12-23",
+          "numeroPedido": "00082324",
+          "cantidad": "1",
+          "fechaEntrega": "2021-12-23",
+          "estado": "En procesos",
+          "cuenta": "Cajiao Alvarado"
+        }
+      ],
+      "items": {
+        "$ref": "#/definitions/order"
+      },
+      "type": "array"
+    },
+    "order": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "fechaCreaci\u00F3n",
+        "numeroPedido",
+        "cantidad",
+        "fechaEntrega",
+        "estado",
+        "cuenta"
+      ],
+      "properties": {
+        "fechaCreaci\u00F3n": {
+          "type": "string",
+          "format": "date"
+        },
+        "numeroPedido": {
+          "type": "string"
+        },
+        "cantidad": {
+          "type": "string"
+        },
+        "fechaEntrega": {
+          "type": "string",
+          "format": "date"
+        },
+        "estado": {
+          "type": "string"
+        },
+        "cuenta": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

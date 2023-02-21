@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:nav="http://www.mulesoft.org/schema/mule/nav" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/nav http://www.mulesoft.org/schema/mule/nav/current/mule-nav.xsd">
+    <http:listener-config name="navision-sapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="navision-sapi-config" api="resource::1ae8b068-9b03-48ad-9448-c353ff5ff5e4:navision-sapi:1.0.0:raml:zip:navision-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <nav:dynamics-nav-config name="Microsoft_Dynamics_NAV_Dynamics_nav_config" doc:name="Microsoft Dynamics NAV Dynamics nav config" doc:id="e9df2f08-41a7-4224-b60c-f5fce52a7972" >
+		<nav:oauth-connection username="admin" accessToken="Rezi9200" soapUrl="https://dynamicsnav.demos.mulesoft.com:7047/BC/WS/" odataUrl="https://dynamicsnav.demos.mulesoft.com:7048/BC/ODataV4/" companyName="CRONUS CANADA, Inc." disableCnCheck="true" />
+	</nav:dynamics-nav-config>
+	<flow name="navision-sapi-main">
+        <http:listener config-ref="navision-sapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="navision-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="navision-sapi-console">
+        <http:listener config-ref="navision-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="navision-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\orders:navision-sapi-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    "fechaCreación": "2021-12-23",
+    numeroPedido: "00082323",
+    cantidad: "23",
+    fechaEntrega: "2021-12-23",
+    estado: "En proceso",
+    cuenta: "Carillo Moreno"
+  }, 
+  {
+    "fechaCreación": "2021-12-23",
+    numeroPedido: "00082324",
+    cantidad: "1",
+    fechaEntrega: "2021-12-23",
+    estado: "En procesos",
+    cuenta: "Cajiao Alvarado"
+  }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<try doc:name="Try" doc:id="71a46233-9386-48ab-b757-09da7287a754" >
+			<nav:odata-query doc:name="Odata query" doc:id="aab6ee9b-25a5-4121-b716-2bb7cbac0e94" config-ref="Microsoft_Dynamics_NAV_Dynamics_nav_config" fetchSize="5">
+			<nav:query><![CDATA[dsql: SELECT No FROM SalesOrders LIMIT 5]]></nav:query>
+		</nav:odata-query>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7ef9e1f9-ebed-48df-b12d-9612eb71a80a" >
+					<logger level="INFO" doc:name="Logger" doc:id="2a0efb59-bb12-4e56-a492-0ccce996a806" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="45579d9c-c844-4fd9-94e7-8b86ada779fd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    "fechaCreación": "2021-12-23",
+    numeroPedido: "00082323",
+    cantidad: "23",
+    fechaEntrega: "2021-12-23",
+    estado: "En proceso",
+    cuenta: "Carillo Moreno"
+  }, 
+  {
+    "fechaCreación": "2021-12-23",
+    numeroPedido: "00082324",
+    cantidad: "1",
+    fechaEntrega: "2021-12-23",
+    estado: "En procesos",
+    cuenta: "Cajiao Alvarado"
+  }
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="post:\orders:application\json:navision-sapi-config">
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"Created"]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<try doc:name="Try" doc:id="cfefb798-b245-42d5-b006-9e827dfbb3dc" >
+			<nav:page-operation doc:name="Page operation" doc:id="2bf3dc64-6fb8-4134-8f46-6db937fa26af" config-ref="Microsoft_Dynamics_NAV_Dynamics_nav_config" service="CreateOrders" operation="create" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d2a43bf8-8a6e-4017-8a65-0f25d4f2e86d" >
+					<logger level="INFO" doc:name="Logger" doc:id="c10fac90-78b6-4bdb-99b3-78c463f516bb" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="238354d4-e42b-4dd8-8b44-83664508fd5a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"Created"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+</mule>

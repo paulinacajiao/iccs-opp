@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:navisions-api="http://www.mulesoft.org/schema/mule/navisions-api"
+	xmlns:call-centers-api="http://www.mulesoft.org/schema/mule/call-centers-api"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/call-centers-api http://www.mulesoft.org/schema/mule/call-centers-api/current/mule-call-centers-api.xsd
+http://www.mulesoft.org/schema/mule/navisions-api http://www.mulesoft.org/schema/mule/navisions-api/current/mule-navisions-api.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<call-centers-api:config name="Call_Center_sAPI_Config" doc:name="Call Center sAPI Config" doc:id="e2354e98-aae0-4152-98e9-b34b4249b5b8" property_host="call-center-sapi.us-e2.cloudhub.io" property_port="80" property_protocol="HTTP" property_basePath="/api" />
+	<navisions-api:config name="Navision_sAPI_Config" doc:name="Navision sAPI Config" doc:id="87fccf5d-2b95-45e3-9259-b90f9f9acca6" property_host="navision-sapi.us-e2.cloudhub.io" property_port="80" property_protocol="HTTP" property_basePath="/api" />
+	<flow name="order-status-papiFlow" doc:id="f050af7b-ebce-4821-b7d6-96b53667c8dc" >
+		<scheduler doc:name="Scheduler" doc:id="5c73fa99-06af-45b6-b9b1-a93c4c4f8dd6" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="5" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler>
+		<call-centers-api:get-leads doc:name="Get leads" doc:id="51938ebf-83a3-4e13-b776-653cc59d2b85" config-ref="Call_Center_sAPI_Config" estado="Convertido"/>
+		<set-variable value="convertido" doc:name="Set Variable" doc:id="4371d5b3-1717-4038-9a83-0cf3e32f97f4" variableName="estado"/>
+		<choice doc:name="Choice" doc:id="90aa3822-8f9a-4327-8baa-5694f282e1b6" >
+			<when expression="#[vars.estado == 'convertido']">
+				<ee:transform doc:name="Transform Message" doc:id="7b9db4fc-35f8-41f1-8be1-e7ab9f3bf9d7">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	estado: payload01.apellidos,
+	fechaEntrega: payload01.fechaCreacion default "",
+	cuenta: 'Company Name',
+	numeroPedido: '0000827272',
+	cantidad: '123',
+	"fechaCreación": payload01.fechaCreacion default ""
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<navisions-api:create-order doc:name="Create order" doc:id="97d75031-40b7-47f5-9e67-3dcbd7a04a70" config-ref="Navision_sAPI_Config"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="76800f6e-51e8-4529-bb4d-f0434996d5eb" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="c820b553-9f26-4848-aa35-20e6dd08c32f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

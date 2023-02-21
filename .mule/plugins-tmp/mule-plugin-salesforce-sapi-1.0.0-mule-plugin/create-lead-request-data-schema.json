@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/leads",
+  "definitions": {
+    "leads": {
+      "example": [
+        {
+          "fechaCreacion": "2021-12-23",
+          "nombre": "Javier",
+          "apellidos": "Lopez Rodriguez",
+          "email": "jlopez@gmail.com ",
+          "direccion": "Avenida Andalucia 23, Granada",
+          "compa\u00F1ia": "NA",
+          "estado": "Nuevo"
+        },
+        {
+          "fechaCreacion": "2021-12-23",
+          "nombre": "Mario",
+          "apellidos": "Carrillo Moreno",
+          "email": "mcarrillo@gmail.com",
+          "direccion": "Gran Via de Colon 23, Granada",
+          "compa\u00F1ia": "Autonomo",
+          "estado": "Nuevo"
+        }
+      ],
+      "items": {
+        "$ref": "#/definitions/lead"
+      },
+      "type": "array"
+    },
+    "lead": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "nombre",
+        "apellidos",
+        "email",
+        "direccion",
+        "compa\u00F1ia",
+        "estado"
+      ],
+      "properties": {
+        "fechaCreacion": {
+          "type": "string",
+          "format": "date"
+        },
+        "nombre": {
+          "type": "string"
+        },
+        "apellidos": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "direccion": {
+          "type": "string"
+        },
+        "compa\u00F1ia": {
+          "type": "string"
+        },
+        "estado": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
